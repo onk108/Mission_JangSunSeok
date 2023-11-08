@@ -22,6 +22,7 @@ public class App {
             System.out.print("명령) ");
 
             String cmd = scanner.nextLine();
+            Rq rq = new Rq(cmd);
 
             if (cmd.equals("종료")) {
                 break;
@@ -30,57 +31,79 @@ public class App {
             } else if (cmd.equals("목록")) {
                 actionList();
             } else if(cmd.startsWith("삭제?")) {
-                actionRemove(cmd);
+                actionRemove(rq);
             } else if(cmd.startsWith("수정?")) {
-                actionModify(cmd);
+                actionModify(rq);
             }
         }
     }
 
-    void actionModify(String cmd) {
-        int id = getParamAsInt(cmd, "id", 0);
+    void actionModify(Rq rq) {
+        int id = rq.getParamAsInt("id",0);
 
-        if(id == 0) {
+        if(id==0) {
             System.out.println("id를 정확히 입력해주세요.");
             return;
         }
-        System.out.printf("%d번 명언을 수정합니다.\n",id);
-    }
+        int index = findIndex(id);
 
-    void actionRemove(String cmd) {
-        int id = getParamAsInt(cmd, "id", 0);
-
-        if(id == 0) {
-            System.out.println("id를 정확히 입력해주세요.");
+        if(index == -1) {
+            System.out.printf("%d번 명언은 존재하지 않습니다.\n",id);
             return;
         }
-        System.out.printf("%d번 명언을 삭제합니다.\n",id);
+        Quotation quotation = quotations.get(index);
+
+        System.out.printf("명언(기존) : %s\n", quotation.content);
+        System.out.print("명언 : ");
+        String content = scanner.nextLine();
+
+        System.out.printf("작가(기존) : %s\n",quotation.authorName);
+        System.out.print("작가 : ");
+        String authorName = scanner.nextLine();
+
+        quotation.content = content;
+        quotation.authorName = authorName;
+
+        System.out.printf("%d번 명언을 수정하였습니다.\n",id);
     }
 
-    private int getParamAsInt(String cmd, String paramName, int defaultValue) {
-        String[] cmdBits = cmd.split("\\?", 2);
-        String action = cmdBits[0];
-        String queryString = cmdBits[1];
+    int findIndex(int id) {
+        for(int i=0; i<quotations.size(); i++) {
+            Quotation quotation = quotations.get(i);
 
-        String[] queryStringBits = queryString.split("&");
-
-        for (int i = 0; i < queryStringBits.length; i++) {
-            String queryParamStr = queryStringBits[i];
-
-            String[] queryParamStrBits = queryParamStr.split("=", 2);
-
-            String paramname = queryParamStrBits[0];
-            String paramValue = queryParamStrBits[1];
-
-            if (paramname.equals(paramName)) {
-                try {
-                    return Integer.parseInt(paramValue);
-                } catch (NumberFormatException e) {
-                    return defaultValue;
-                }
+            if(quotation.id==id) {
+                return i;
             }
         }
-        return defaultValue;
+        return -1;
+    }
+
+    void actionRemove(Rq rq) {
+        int id = rq.getParamAsInt("id",0);
+
+        if(id==0) {
+            System.out.println("id를 정확히 입력해주세요.");
+            return;
+        }
+        int index = getIndex(id);
+
+        if(index==-1) {
+            System.out.printf("%d번 명언은 존재하지 않습니다.\n",id);
+            return;
+        }
+        quotations.remove(index);
+        System.out.printf("%d번 명언은 삭제되었습니다.\n",id);
+    }
+
+    int getIndex(int id) {
+        for(int i=0; i<quotations.size(); i++) {
+            Quotation quotation = quotations.get(i);
+
+            if(quotation.id==id) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     void actionWrite() {
