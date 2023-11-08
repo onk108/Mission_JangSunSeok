@@ -32,7 +32,7 @@ public class App {
         }
     }
 
-    void Modify(String cmd) {
+    private void Modify(String cmd) {
         String idStr = cmd.replace("수정?id=","");
         int id = Integer.parseInt(idStr);
         int index = getIndex(id);
@@ -57,7 +57,7 @@ public class App {
         System.out.printf("%d번 명언을 수정하였습니다.\n",index+1);
     }
 
-    void Remove(String cmd) {
+    private void Remove(String cmd) {
         String idStr = cmd.replace("삭제?id=","");
         int id = Integer.parseInt(idStr);
         int index = getIndex(id);
@@ -82,7 +82,7 @@ public class App {
         return -1;
     }
 
-    void Write() {
+    private void Write() {
         System.out.print("명언 : ");
         String content = scanner.nextLine();
 
@@ -96,7 +96,7 @@ public class App {
         System.out.printf("%d번 명언이 등록되었습니다.\n",number);
     }
 
-    void List() {
+    private void List() {
         System.out.println("번호 / 작가 / 명언");
         System.out.println("-------------------");
 
